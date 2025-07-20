@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.command.commands.duel;
 
+import com.Zrips.CMI.CMI;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
@@ -26,6 +27,7 @@ public class DuelCommand extends BaseCommand {
 
     private final WorldGuardHook worldGuard;
     private final VaultHook vault;
+    private boolean CMIEnabled;
 
     public DuelCommand(final DuelsPlugin plugin) {
         super(plugin, "duel", Permissions.DUEL, true);
@@ -40,6 +42,8 @@ public class DuelCommand extends BaseCommand {
         );
         this.worldGuard = hookManager.getHook(WorldGuardHook.class);
         this.vault = hookManager.getHook(VaultHook.class);
+
+        CMIEnabled = plugin.getServer().getPluginManager().isPluginEnabled("CMI");
     }
 
     @Override
@@ -69,7 +73,7 @@ public class DuelCommand extends BaseCommand {
 
         final Player target = Bukkit.getPlayerExact(args[0]);
 
-        if (target == null) {
+        if (target == null || (CMIEnabled && CMI.getInstance().getPlayerManager().getUser(target).isVanished())) {
             lang.sendMessage(sender, "ERROR.player.not-found", "name", args[0]);
             return true;
         }
